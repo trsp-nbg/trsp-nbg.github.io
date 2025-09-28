@@ -376,21 +376,31 @@
   }
 
 let lastScrollY = window.scrollY;
-let ignoreScroll = false;
+let scrollIntent = false;
 const categoryBar = document.querySelector('.category-bar');
 const categoryLinks = document.querySelectorAll('.category-bar a');
 
+// Zielbereiche beobachten
+const targets = ['#VAG', '#DB', '#Edits'].map(id => document.querySelector(id));
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && scrollIntent) {
+      scrollIntent = false; // Scroll abgeschlossen → wieder aktivieren
+    }
+  });
+}, { threshold: 0.5 }); // Sichtbarkeit ab 50%
+
+targets.forEach(target => observer.observe(target));
+
+// Intent setzen bei Klick
 categoryLinks.forEach(link => {
   link.addEventListener('click', () => {
-    ignoreScroll = true;
-    setTimeout(() => {
-      ignoreScroll = false;
-    }, 500); // Dauer des Scrollens nach Klick
+    scrollIntent = true;
   });
 });
 
 window.addEventListener('scroll', () => {
-  if (ignoreScroll) return;
+  if (scrollIntent) return;
 
   const currentScrollY = window.scrollY;
 
@@ -406,3 +416,4 @@ window.addEventListener('scroll', () => {
 
 </body>
 </html>
+
