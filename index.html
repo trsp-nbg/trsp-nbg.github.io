@@ -166,16 +166,12 @@
 	  background: var(--category-bar-bg);
 	  position: fixed;
 	  left: 50%;
-      transform: translate(-50%, 0);
+      transform: translateX(-50%);
 	  bottom: 10px;
 	  z-index: 9999;
 	  backdrop-filter: blur(8px);
 	  -webkit-backdrop-filter: blur(8px);
 	  box-shadow: 0 -2px 8px rgba(55, 0, 0, 0.3);
-	  transition: transform 0.3s ease;
-	}
-	.category-bar.hidden {
-  	  transform: translate(-50%, 100px);
 	}
 	.category-bar a {
 	  background: #f00;
@@ -376,45 +372,7 @@
   }
 
 let lastScrollY = window.scrollY;
-let scrollIntent = false;
-const categoryBar = document.querySelector('.category-bar');
-const categoryLinks = document.querySelectorAll('.category-bar a');
-
-// Zielbereiche beobachten
-const targets = ['#VAG', '#DB', '#Edits'].map(id => document.querySelector(id));
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && scrollIntent) {
-      scrollIntent = false; // Scroll abgeschlossen → wieder aktivieren
-    }
-  });
-}, { threshold: 0.5 }); // Sichtbarkeit ab 50%
-
-targets.forEach(target => observer.observe(target));
-
-// Intent setzen bei Klick
-categoryLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    scrollIntent = true;
-  });
-});
-
-window.addEventListener('scroll', () => {
-  if (scrollIntent) return;
-
-  const currentScrollY = window.scrollY;
-
-  if (currentScrollY < lastScrollY) {
-    categoryBar.classList.remove('hidden');
-  } else {
-    categoryBar.classList.add('hidden');
-  }
-
-  lastScrollY = currentScrollY;
-});
 </script>
 
 </body>
 </html>
-
-
