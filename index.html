@@ -40,22 +40,7 @@
       text-align: center;
 	  padding-bottom: 1px;
     }
-.reveal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  background: var(--background); /* oder z.B. #100000 */
-  clip-path: circle(0% at 50% 50%);
-  animation: revealCircle 1.2s ease-out forwards;
-  pointer-events: none;
-  box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
-}
 
-@keyframes revealCircle {
-  to {
-    clip-path: circle(150% at 50% 50%);
-  }
-}
 	.collection {
 	  padding-bottom: 40px;
 	}
@@ -234,10 +219,27 @@
 		--video-title-bg: #ffcccc;
 	  }
 	}
+	.fade-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 0%, var(--background) 1%);
+  opacity: 1;
+  animation: fadeOutCenter 1s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+}
+
+@keyframes fadeOutCenter {
+  to {
+    transform: scale(1000);
+	opacity: 0;
+  }
+}
+
   </style>
 </head>
 <body>
-<div class="reveal-overlay">
+<div class="fade-overlay"></div>
 <header>
   <t>trsp.nbg - Transit Vibes</t>
 </header>
@@ -358,7 +360,6 @@
   </div>
 </section>
 
-</div>
 <footer class="category-bar">
   <a href="#vag" data-label="VAG Nürnberg">VAG</a>
   <a href="#db" data-label="Deutsche Bahn">DB</a>
@@ -393,9 +394,3 @@ let lastScrollY = window.scrollY;
 
 </body>
 </html>
-
-
-
-
-
-
