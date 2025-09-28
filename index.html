@@ -374,17 +374,29 @@
       alert("Teilen-Funktion wird von diesem Browser nicht unterstützt.");
     }
   }
-	let lastScrollY = window.scrollY;
+
+let lastScrollY = window.scrollY;
+let ignoreScroll = false;
 const categoryBar = document.querySelector('.category-bar');
+const categoryLinks = document.querySelectorAll('.category-bar a');
+
+categoryLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    ignoreScroll = true;
+    setTimeout(() => {
+      ignoreScroll = false;
+    }, 500); // Dauer des Scrollens nach Klick
+  });
+});
 
 window.addEventListener('scroll', () => {
+  if (ignoreScroll) return;
+
   const currentScrollY = window.scrollY;
 
   if (currentScrollY < lastScrollY) {
-    // Scrollt nach oben → anzeigen
     categoryBar.classList.remove('hidden');
   } else {
-    // Scrollt nach unten → ausblenden
     categoryBar.classList.add('hidden');
   }
 
@@ -394,6 +406,3 @@ window.addEventListener('scroll', () => {
 
 </body>
 </html>
-
-
-
