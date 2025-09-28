@@ -172,6 +172,11 @@
 	  backdrop-filter: blur(8px);
 	  -webkit-backdrop-filter: blur(8px);
 	  box-shadow: 0 -2px 8px rgba(55, 0, 0, 0.3);
+	  transition: transform 0.3s ease;
+  	  transform: translateY(0);
+	}
+	.category-bar.hidden {
+  	  transform: translateY(100px);
 	}
 	.category-bar a {
 	  background: #f00;
@@ -370,7 +375,24 @@
       alert("Teilen-Funktion wird von diesem Browser nicht unterstützt.");
     }
   }
+	let lastScrollY = window.scrollY;
+const categoryBar = document.querySelector('.category-bar');
+
+window.addEventListener('scroll', () => {
+  const currentScrollY = window.scrollY;
+
+  if (currentScrollY < lastScrollY) {
+    // Scrollt nach oben → anzeigen
+    categoryBar.classList.remove('hidden');
+  } else {
+    // Scrollt nach unten → ausblenden
+    categoryBar.classList.add('hidden');
+  }
+
+  lastScrollY = currentScrollY;
+});
 </script>
 
 </body>
 </html>
+
