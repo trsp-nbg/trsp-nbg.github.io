@@ -166,17 +166,16 @@
 	  background: var(--category-bar-bg);
 	  position: fixed;
 	  left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, 0);
 	  bottom: 10px;
 	  z-index: 9999;
 	  backdrop-filter: blur(8px);
 	  -webkit-backdrop-filter: blur(8px);
 	  box-shadow: 0 -2px 8px rgba(55, 0, 0, 0.3);
 	  transition: transform 0.3s ease;
-  	  transform: translateY(0);
 	}
 	.category-bar.hidden {
-  	  transform: translateY(100px);
+  	  transform: translate(-50%, 100px);
 	}
 	.category-bar a {
 	  background: #f00;
@@ -395,4 +394,5 @@ window.addEventListener('scroll', () => {
 
 </body>
 </html>
+
 
