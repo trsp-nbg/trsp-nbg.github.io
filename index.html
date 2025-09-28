@@ -40,6 +40,22 @@
       text-align: center;
 	  padding-bottom: 1px;
     }
+	.reveal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--background); /* oder z.B. #100000 */
+  clip-path: circle(0% at 50% 50%);
+  animation: revealCircle 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes revealCircle {
+  to {
+    clip-path: circle(150% at 50% 50%);
+  }
+}
+
 	.collection {
 	  padding-bottom: 40px;
 	}
@@ -182,19 +198,19 @@
 	  font-size: 1rem;
 	  cursor: default;
 	}
-	.category-bar a[href="#VAG"] {
+	.category-bar a[href="#vag"] {
 	  border-top-left-radius: 12px;
 	  border-top-right-radius: 2px;
 	  border-bottom-right-radius: 2px;
 	  border-bottom-left-radius: 12px;
 	}
-	.category-bar a[href="#DB"] {
+	.category-bar a[href="#db"] {
 	  border-top-left-radius: 2px;
 	  border-top-right-radius: 2px;
 	  border-bottom-right-radius: 2px;
 	  border-bottom-left-radius: 2px;
 	}
-	.category-bar a[href="#Edits"] {
+	.category-bar a[href="#edits"] {
 	  border-top-left-radius: 2px;
 	  border-top-right-radius: 12px;
 	  border-bottom-right-radius: 12px;
@@ -221,7 +237,7 @@
   </style>
 </head>
 <body>
-
+<div class="reveal-overlay">
 <header>
   <t>trsp.nbg - Transit Vibes</t>
 </header>
@@ -348,6 +364,7 @@
   <a href="#db" data-label="Deutsche Bahn">DB</a>
   <a href="#edits" data-label="Edits">Edits</a>
 </footer>
+</div>
 <script>
   const videos = document.querySelectorAll('video');
   videos.forEach(current => {
@@ -376,5 +393,6 @@ let lastScrollY = window.scrollY;
 
 </body>
 </html>
+
 
 
