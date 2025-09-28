@@ -44,17 +44,17 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
+  background: var(--background); /* oder z.B. #100000 */
+  clip-path: circle(0% at 50% 50%);
+  animation: revealCircle 1.2s ease-out forwards;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 0%, var(--background) 70%);
-  mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
-  -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
-  animation: revealCircle 1.8s cubic-bezier(0.5, 0, 0.5, 1) forwards;
-  transform: scale(0);
-  transform-origin: center;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+}
 
-  /* Diese zwei Zeilen fixen das Layout-Zittern */
-  will-change: transform;
-  contain: layout paint;
+@keyframes revealCircle {
+  to {
+    clip-path: circle(150% at 50% 50%);
+  }
 }
 	.collection {
 	  padding-bottom: 40px;
@@ -393,6 +393,7 @@ let lastScrollY = window.scrollY;
 
 </body>
 </html>
+
 
 
 
