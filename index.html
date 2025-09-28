@@ -186,6 +186,18 @@
 	  border-bottom-right-radius: 12px;
 	  border-bottom-left-radius: 2px;
 	}
+	.category-bar a[href="#VAG"] {
+	  border-top-left-radius: 2px;
+	  border-top-right-radius: 2px;
+	  border-bottom-right-radius: 2px;
+	  border-bottom-left-radius: 2px;
+	}
+	.category-bar a[href="#Edits"] {
+	  border-top-left-radius: 2px;
+	  border-top-right-radius: 12px;
+	  border-bottom-right-radius: 12px;
+	  border-bottom-left-radius: 2px;
+	}
 	@media (prefers-color-scheme: dark) {
 	  :root {
 		--background: #100000;
@@ -316,10 +328,23 @@
 
   </div>
 </section>
+<section id="Edits">
+  <h2>Edits (VAG und DB)</h2>
+  <div class="video-grid">
+
+	<div class="video-wrapper">
+      <video src="resources/movies/Edit 1.mp4" controls preload="metadata"></video>
+      <div class="video-title">Alle Modelle, die ich gespottet habe</div>
+    </div>
+
+  </div>
+</section>
+
 </div>
 <footer class="category-bar">
-  <a href="#VAG" data-label="VAG Nürnberg">VAG Nürnberg</a>
-  <a href="#DB" data-label="Deutsche Bahn">Deutsche Bahn</a>
+  <a href="#VAG" data-label="VAG Nürnberg">VAG</a>
+  <a href="#DB" data-label="Deutsche Bahn">DB</a>
+  <a href="#Edits" data-label="Edits">Edits</a>
 </footer>
 <script>
   const videos = document.querySelectorAll('video');
@@ -347,4 +372,5 @@
 
 </body>
 </html>
+
 
