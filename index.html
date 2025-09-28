@@ -51,15 +51,11 @@
   animation: revealCircle 1.8s cubic-bezier(0.5, 0, 0.5, 1) forwards;
   transform: scale(0);
   transform-origin: center;
-}
 
-@keyframes revealCircle {
-  to {
-    transform: scale(3);
-    opacity: 0;
-  }
+  /* Diese zwei Zeilen fixen das Layout-Zittern */
+  will-change: transform;
+  contain: layout paint;
 }
-
 	.collection {
 	  padding-bottom: 40px;
 	}
@@ -397,6 +393,7 @@ let lastScrollY = window.scrollY;
 
 </body>
 </html>
+
 
 
 
