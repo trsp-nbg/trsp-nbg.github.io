@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Matrix</title>
+    <style>
+	
+		#sidebar {
+			position: fixed;
+            right: 4px;
+            display: flex;
+            justify-content: center;
+            z-index: 99999999;
+            gap: 3px;
+            flex-wrap: wrap;
+            flex-direction: column;
+			top: 50%;
+			width: 200px;
+			transform: translateY(-50%);
+		}
+
+        @font-face {
+            font-family: 'Bahnschrift';
+            src: url('https://trsp-nbg.github.io/resources/fonts/Bahnschrift.ttf') format('truetype');
+            font-weight: 100;
+            font-style: normal;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0;
+            background: #000;
+            font-family: "Bahnschrift", sans-serif;
+            color: white;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        #menu,
+        #menuCenter1,
+		#menuCenter2,
+		#watermark {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 20%, black);
+            z-index: 99999999;
+            padding: 10px !important;
+            gap: 8px;
+            border-radius: 24px;
+            flex-wrap: wrap;
+            flex-direction: column;
+			width: 180px;
+        }
+
+        #menu {
+            //top: 4px;
+            border-radius: 24px 24px 5px 5px;
+			height: 180px;
+        }
+		
+		#menuCenter1 {
+            //top: 208px;
+            border-radius: 5px;
+			height: 70px;
+        }
+
+        #menuCenter2 {
+            //top: 302px;
+            border-radius: 5px;
+			height: 260px;
+        }
+		
+		#watermark {
+			border-radius: 5px 5px 24px 24px;
+			//top: 586px;
+			height: 40px;	
+		}
+
+        .buttons {
+            display: flex;
+            gap: 1px;
+            align-items: stretch;
+            text-align: center;
+            height: 28px;
+            border-radius: 14px;
+            width: 180px;
+        }
+
+        .group {
+            gap: 1px;
+            display: grid;
+        }
+
+        #matrix-scroll {
+            width: calc(100vw - 208px);
+            height: 100vh;
+            overflow: auto;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background: #000;
+            scrollbar-color: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black) #000;
+            scrollbar-width: thin;
+        }
+
+        #matrix-scroll::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        #matrix-scroll::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        #matrix-scroll::-webkit-scrollbar-thumb {
+            background-color: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            border-radius: 5px;
+        }
+
+        #matrix-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: color-mix(in srgb, var(--dot-color, #ff8800) 60%, black);
+        }
+
+        #matrix-scroll.presentation {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+        }
+
+        #matrix.presentation {
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        #matrix {
+            display: grid;
+            grid-template-columns: repeat(20, 10px);
+            grid-template-rows: repeat(15, 10px);
+            gap: 1px;
+            padding: 10px;
+            background: none;
+            user-select: none;
+            justify-content: start;
+            align-content: start;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background: radial-gradient(circle at 30% 30%, #222, #000);
+            box-shadow: inset -1px -1px 2px rgba(0, 0, 0, 0.8);
+            cursor: default;
+        }
+
+        .active {
+            background: radial-gradient(circle at 30% 30%, var(--dot-color, #ff8800), var(--dot-color, #ff8800));
+            box-shadow: 0 0 10px var(--dot-color, #ff8800),
+                0 0 20px var(--dot-color, #ff8800),
+                0 0 30px var(--dot-color, #ff8800);
+			z-index: 9999;
+        }
+
+        button {
+            font-family: "Bahnschrift", sans-serif;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            color: white;
+            border: none;
+            padding: 6px 0;
+            cursor: default;
+            border-radius: 14px;
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        button:hover {
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 60%, black);
+        }
+
+        .label,
+        .label:hover {
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: default;
+            border-radius: 14px;
+        }
+
+        .color-wrapper {
+            position: relative;
+            width: 63px;
+            height: 28px;
+            border-radius: 14px;
+            overflow: hidden;
+            border-bottom-left-radius: 5px !important;
+            border-top-left-radius: 5px !important;
+        }
+
+        input[type="color"] {
+            appearance: none;
+            border: none;
+            width: 63px;
+            height: 28px;
+            cursor: default;
+            background: none;
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
+
+        .text-center-left,
+        .text-bottom-left,
+        .text-left,
+        .inner,
+        .outer,
+        .right,
+        .left {
+            font-family: "Bahnschrift", sans-serif;
+        }
+
+        .text-center-left,
+        .text-center-left:hover {
+            border-radius: 5px;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            width: 116px;
+        }
+
+        .text-bottom-left,
+        .text-bottom-left:hover {
+            border-radius: 5px 5px 5px 14px;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            width: 116px;
+        }
+
+        .text-left,
+        .text-left:hover {
+            width: 116px;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            border-radius: 14px 5px 5px 14px;
+        }
+
+        .inner {
+            border-radius: 5px; 
+            width: 31px;
+        }
+
+        .outer {
+            border-radius: 14px;
+            width: 180px;
+        }
+
+        .right {
+            border-radius: 5px 14px 14px 5px;
+            width: 50%;
+        }
+
+        .left {
+            border-radius: 14px 5px 5px 14px !important;
+            width: 50%;
+        }
+
+        .bottom-right {
+            border-radius: 5px 5px 14px 5px;
+            width: 31px;
+        }
+
+        .edit-label,
+        .edit-label:hover {
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            color: white;
+            text-align: center;
+            height: 28px;
+            border-radius: 14px;
+            font-size: 14px;
+            width: 180px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .select {
+            font-family: "Bahnschrift", sans-serif;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            color: white;
+            border-radius: 5px 5px 14px 14px;
+            height: 28px;
+            width: 180px;
+            border: none;
+            padding: 5px;
+        }
+
+        .name {
+            font-family: "Bahnschrift", sans-serif;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            color: white;
+            border-radius: 5px 5px 14px 14px;
+            height: 18px;
+            width: 160px;
+            border: none;
+            padding: 5px 10px;
+        }
+
+        .name::placeholder {
+            color: color-mix(in srgb, var(--dot-color, #ff8800) 60%, white);
+        }
+
+        .checkbox {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 60%, black);
+            cursor: default;
+            margin: 0px 7px;
+            transition: background 0.2s ease;
+            position: absolute;
+        }
+
+        .checkbox:checked {
+            background: green;
+        }
+
+        .option-box {
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            padding-top: 7px;
+            padding-bottom: 7px;
+            height: 14px;
+        }
+
+        .option-box.round-top {
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .option-box.round-bottom {
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .option-box.full-round {
+            border-radius: 14px;
+        }
+
+        .filename-label,
+        .format-label {
+            font-weight: bold;
+            text-align: center;
+            background: color-mix(in srgb, var(--dot-color, #ff8800) 40%, black);
+            padding: 5px;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            width: 170px;
+            height: 18px;
+        }
+
+        .powered {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #ff8800;
+        }
+
+        .Wasserzeichen {
+            width: auto;
+            height: 16px;
+            margin-left: 4px;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        h2 {
+            padding: 0;
+            text-align: center;
+            margin: 0;
+        }
+
+        a {
+            transform: translate(30px, -2px);
+            diplay: grid;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+<div id="sidebar">
+    <div id="menu">
+        <div class="group">
+            <div><button class="edit-label">Spalten: <span id="colCounter">20</span></button></div>
+            <div class="buttons">
+                <button class="text-center-left">Links</button>
+                <button class="inner" onclick="addColumnLeft()">+</button>
+                <button class="inner" onclick="removeColumnLeft()">-</button>
+            </div>
+            <div class="buttons">
+                <button class="text-bottom-left">Rechts</button>
+                <button class="inner" onclick="addColumn()">+</button>
+                <button class="bottom-right" onclick="removeColumn()">-</button>
+            </div>
+        </div>
+
+        <div class="group">
+            <div><button class="edit-label">Zeilen: <span id="rowCounter">15</span></button></div>
+            <div class="buttons">
+                <button class="text-center-left">Oben</button>
+                <button class="inner" onclick="addRowTop()">+</button>
+                <button class="inner" onclick="removeRowTop()">-</button>
+            </div>
+            <div class="buttons">
+                <button class="text-bottom-left">Unten</button>
+                <button class="inner" onclick="addRow()">+</button>
+                <button class="bottom-right" onclick="removeRow()">-</button>
+            </div>
+        </div>
+	</div>
+	<div id="menuCenter1">
+        <div class="buttons">
+            <button class="text-left">Farbe</button>
+            <div class="color-wrapper">
+                <input type="color" id="colorPicker" value="#ff8800" onchange="setColor(this.value)">
+            </div>
+        </div>
+        <div class="buttons">
+            <button onclick="startPresentation()" class="left">Vorführung</button>
+            <button class="right" onclick="document.getElementById('importFile').click()">Importieren</button>
+            <input type="file" id="importFile" accept=".json" hidden>
+        </div>
+    </div>
+
+    <div id="menuCenter2">
+        <h2>Download</h2>
+        <div class="group">
+            <label for="exportFormat" class="format-label">Format:</label>
+            <select id="exportFormat" onchange="updateExportOptions()" class="select">
+                <option value="json">JSON (Bearbeitung)</option>
+                <option value="svg">SVG (Vektor)</option>
+                <option value="png">PNG (Bild)</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label for="includeBackground" class="option-box round-top" id="optionBackground">
+                <input type="checkbox" class="checkbox" id="includeBackground">
+                <a>Hintergrund</a>
+            </label>
+
+            <label for="includeInactive" class="option-box round-bottom" id="optionInactive">
+                <input type="checkbox" class="checkbox" id="includeInactive">
+                <a>Inaktive Dots</a>
+            </label>
+
+            <label for="includeColor" class="option-box full-round" id="optionColor">
+                <input type="checkbox" class="checkbox" id="includeColor">
+                <a>Farbe übernehmen</a>
+            </label>
+        </div>
+
+        <div class="group">
+            <label for="exportFilename" class="filename-label">Dateiname:</label>
+            <input type="text" id="exportFilename" class="name" placeholder="matrix">
+        </div>
+
+        <div class="export-buttons">
+            <button class="outer" onclick="handleExport()">Exportieren</button>
+        </div>
+	</div>
+	
+	<div id="watermark" tooltip="https://trsp-nbg.github.io">
+		<svg xmlns="http://www.w3.org/2000/svg" width="180" height="30" viewBox="0 0 1290 390" style="overflow: visible;"><defs><radialGradient id="gradInactive" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#222"/><stop offset="100%" stop-color="#000"/></radialGradient><filter id="glow" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+				<feGaussianBlur stdDeviation="9" result="blur"/>
+				<feMerge>
+					<feMergeNode in="blur"/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter></defs><circle cx="290" cy="5" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="5" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="5" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="5" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="5" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="20" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="20" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="20" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="20" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="35" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="35" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="35" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="35" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="680" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="695" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="905" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="50" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="665" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="710" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="65" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="665" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="680" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="695" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="710" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="980" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="80" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="455" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="665" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="95" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="680" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="695" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="710" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="905" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="980" cy="110" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="140" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="155" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="170" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="185" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="5" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="80" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="95" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="200" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="215" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="230" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="245" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="350" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="815" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="830" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1010" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1025" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1190" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1205" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="200" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="5" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="80" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="95" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="185" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="200" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="215" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="230" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="245" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="350" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="425" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="800" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="815" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="830" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="980" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1010" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1025" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1190" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1205" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="215" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="185" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="200" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="275" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="425" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="800" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="815" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="830" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="980" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1025" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1085" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1115" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="230" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="185" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="275" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="800" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="830" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1085" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1115" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="245" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="350" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1085" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1115" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="260" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="350" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="425" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1085" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1115" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="275" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="425" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1085" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1115" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="290" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="20" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="275" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="425" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="440" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="635" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="980" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1025" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1085" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1190" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1205" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="305" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="35" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="80" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="95" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="290" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="350" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="425" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="530" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="620" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="665" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="680" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="695" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="710" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="980" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1010" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1025" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1070" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1190" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1205" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="320" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="50" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="65" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="80" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="95" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="125" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="140" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="155" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="170" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="305" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="320" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="335" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="350" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="365" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="380" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="395" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="410" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="545" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="560" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="575" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="590" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="605" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="665" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="680" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="695" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="710" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="740" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="755" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="770" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="785" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="845" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="860" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="875" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="890" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="920" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="935" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="950" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="965" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="995" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1010" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1025" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1040" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1055" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="335" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1280" cy="350" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1190" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1205" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1265" cy="365" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="470" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="485" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="500" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="515" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1130" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1145" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1160" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1175" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1190" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1205" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1220" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1235" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/><circle cx="1250" cy="380" r="5" fill="var(--dot-color, #ff8800)" filter="url(#glow)"/></svg>    
+	</div>
+
+<script>
+  document.getElementById("watermark").addEventListener("click", () => {
+    window.location.href = "https://trsp-nbg.github.io";
+  });
+</script>
+</div>
+
+    <div id="matrix-scroll">
+        <div id="matrix"></div>
+    </div>
+
+    <script>
+        const matrix = document.getElementById("matrix");
+        const menu = document.getElementById("sidebar");
+        const scrollBox = document.getElementById("matrix-scroll");
+        const rowCounter = document.getElementById("rowCounter");
+        const colCounter = document.getElementById("colCounter");
+        const colorPicker = document.getElementById("colorPicker");
+
+        let fullMatrix = [];
+        let visibleRows = 15;
+        let visibleCols = 20;
+        let currentColor = "#ff8800";
+        let locked = false;
+        let tapCount = 0;
+        let tapTimer = null;
+        let resizeHandlerAttached = false;
+        let isDragging = false;
+        let dragMode = null;
+        let undoStack = [];
+        let redoStack = [];
+
+        document.getElementById("colorPicker").addEventListener("input", (e) => {
+            setColor(e.target.value);
+        });
+
+        function setColor(val) {
+            currentColor = val;
+            pushState();
+            document.documentElement.style.setProperty("--dot-color", currentColor);
+            localStorage.setItem("matrixColor", currentColor);
+        }
+
+        function loadColor() {
+            const savedColor = localStorage.getItem("matrixColor");
+            if (savedColor) {
+                currentColor = savedColor;
+                colorPicker.value = savedColor;
+                document.documentElement.style.setProperty("--dot-color", currentColor);
+            }
+        }
+
+        function saveMatrixState() {
+            localStorage.setItem("matrixRows", visibleRows);
+            localStorage.setItem("matrixCols", visibleCols);
+            localStorage.setItem("matrixData", JSON.stringify(fullMatrix));
+        }
+
+        function loadMatrixState() {
+            const rows = parseInt(localStorage.getItem("matrixRows"));
+            const cols = parseInt(localStorage.getItem("matrixCols"));
+            const data = JSON.parse(localStorage.getItem("matrixData"));
+            if (rows && cols) {
+                visibleRows = rows;
+                visibleCols = cols;
+            }
+            if (Array.isArray(data)) {
+                fullMatrix = data;
+            }
+        }
+
+        function initMatrix(rows, cols) {
+            for (let y = 0; y < rows; y++) {
+                if (!fullMatrix[y]) fullMatrix[y] = [];
+                for (let x = 0; x < cols; x++) {
+                    if (fullMatrix[y][x] === undefined) fullMatrix[y][x] = false;
+                }
+            }
+        }
+
+        function render() {
+            initMatrix(visibleRows, visibleCols);
+            matrix.style.gridTemplateColumns = `repeat(${visibleCols}, 14px)`;
+            matrix.style.gridTemplateRows = `repeat(${visibleRows}, 14px)`;
+            matrix.innerHTML = "";
+
+            for (let y = 0; y < visibleRows; y++) {
+                for (let x = 0; x < visibleCols; x++) {
+                    const dot = document.createElement("div");
+                    dot.className = "dot";
+                    if (fullMatrix[y][x]) dot.classList.add("active");
+
+                    dot.addEventListener("mousedown", (e) => {
+                        if (locked) return;
+                        e.preventDefault();
+                        isDragging = true;
+                        dragMode = fullMatrix[y][x] ? "deactivate" : "activate";
+                        applyToggle(dot, y, x);
+                    });
+
+                    dot.addEventListener("mouseenter", () => {
+                        if (isDragging && !locked) applyToggle(dot, y, x);
+                    });
+
+                    matrix.appendChild(dot);
+                }
+            }
+
+            rowCounter.textContent = visibleRows;
+            colCounter.textContent = visibleCols;
+            saveMatrixState();
+        }
+
+        window.addEventListener("mouseup", () => {
+            isDragging = false;
+            dragMode = null;
+        });
+
+        function applyToggle(dot, y, x) {
+            const newVal = (dragMode === "activate");
+            if (fullMatrix[y][x] !== newVal) {
+                pushState();
+                fullMatrix[y][x] = newVal;
+                dot.classList.toggle("active", newVal);
+                saveMatrixState();
+            }
+        }
+
+        function pushState() {
+            undoStack.push(JSON.stringify(fullMatrix));
+            redoStack = [];
+        }
+
+        function undo() {
+            if (undoStack.length === 0) return;
+            redoStack.push(JSON.stringify(fullMatrix));
+            fullMatrix = JSON.parse(undoStack.pop());
+            render();
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            undoStack.push(JSON.stringify(fullMatrix));
+            fullMatrix = JSON.parse(redoStack.pop());
+            render();
+        }
+
+        window.addEventListener("keydown", (e) => {
+            if (locked === false) {
+                if (e.ctrlKey && e.key === "z") {
+                    e.preventDefault();
+                    undo();
+                }
+                if (e.ctrlKey && (e.key === "y" || (e.shiftKey && e.key === "Z"))) {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+        });
+
+        function addColumn() {
+            pushState();
+            for (let y = 0; y < visibleRows; y++) fullMatrix[y].push(false);
+            visibleCols++;
+            render();
+        }
+
+        function removeColumn() {
+            if (visibleCols <= 1) return;
+            pushState();
+            for (let y = 0; y < visibleRows; y++) fullMatrix[y].pop();
+            visibleCols--;
+            render();
+        }
+
+        function addRow() {
+            pushState();
+            fullMatrix.push(new Array(visibleCols).fill(false));
+            visibleRows++;
+            render();
+        }
+
+        function removeRow() {
+            if (visibleRows <= 1) return;
+            pushState();
+            fullMatrix.pop();
+            visibleRows--;
+            render();
+        }
+
+        function addColumnLeft() {
+            pushState();
+            for (let y = 0; y < visibleRows; y++) fullMatrix[y].unshift(false);
+            visibleCols++;
+            render();
+        }
+
+        function removeColumnLeft() {
+            if (visibleCols <= 1) return;
+            pushState();
+            for (let y = 0; y < visibleRows; y++) fullMatrix[y].shift();
+            visibleCols--;
+            render();
+        }
+
+        function addRowTop() {
+            pushState();
+            fullMatrix.unshift(new Array(visibleCols).fill(false));
+            visibleRows++;
+            render();
+        }
+
+        function removeRowTop() {
+            if (visibleRows <= 1) return;
+            pushState();
+            fullMatrix.shift();
+            visibleRows--;
+            render();
+        }
+
+        function computeScale() {
+            const scaleX = window.innerWidth / matrix.scrollWidth;
+            const scaleY = window.innerHeight / matrix.scrollHeight;
+            return Math.min(scaleX, scaleY);
+        }
+
+        function startPresentation() {
+            locked = true;
+            menu.style.display = "none";
+            scrollBox.classList.add("presentation");
+            matrix.classList.add("presentation");
+            matrix.style.transform = `scale(${computeScale()})`;
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            tapCount = 0;
+            tapTimer = null;
+            document.addEventListener("click", handleTap);
+
+            if (!resizeHandlerAttached) {
+                window.addEventListener("resize", handleResizeInPresentation);
+                resizeHandlerAttached = true;
+            }
+        }
+
+        function handleResizeInPresentation() {
+            if (matrix.classList.contains("presentation")) {
+                matrix.style.transform = `scale(${computeScale()})`;
+            }
+        }
+
+        function handleTap() {
+            tapCount++;
+            if (!tapTimer) {
+                tapTimer = setTimeout(() => {
+                    tapCount = 0;
+                    tapTimer = null;
+                }, 1250);
+            }
+            if (tapCount >= 5) endPresentation();
+        }
+
+        function endPresentation() {
+            locked = false;
+            menu.style.display = "flex";
+            scrollBox.classList.remove("presentation");
+            matrix.classList.remove("presentation");
+            matrix.style.transform = "none";
+            if (document.fullscreenElement) document.exitFullscreen();
+            document.removeEventListener("click", handleTap);
+        }
+
+        function updateExportOptions() {
+            const format = document.getElementById("exportFormat").value;
+            document.getElementById("optionBackground").style.display = (format === "svg" || format === "png") ? "block" : "none";
+            document.getElementById("optionInactive").style.display = (format === "svg" || format === "png") ? "block" : "none";
+            document.getElementById("optionColor").style.display = (format === "json") ? "block" : "none";
+        }
+
+        function handleExport() {
+            const format = document.getElementById("exportFormat").value;
+            const filename = document.getElementById("exportFilename").value.trim() || "matrix";
+            const includeBackground = document.getElementById("includeBackground")?.checked || false;
+            const includeInactive = document.getElementById("includeInactive")?.checked || false;
+            const includeColor = document.getElementById("includeColor")?.checked || false;
+
+            if (format === "json") {
+                exportAsJSON(filename, includeColor);
+            } else if (format === "svg") {
+                exportAsSVG(filename, includeBackground, includeInactive);
+            } else if (format === "png") {
+                exportAsPNG(filename, includeBackground, includeInactive);
+            }
+        }
+
+        function exportAsJSON(filename, includeColor) {
+            const data = {
+                rows: visibleRows,
+                cols: visibleCols,
+                matrix: fullMatrix
+            };
+            if (includeColor) data.color = currentColor;
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+                type: "application/json"
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename + ".json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAsSVG(filename, includeBackground, includeInactive) {
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            const dotSize = 10;
+            const gap = 5;
+            const width = visibleCols * (dotSize + gap);
+            const height = visibleRows * (dotSize + gap);
+            svg.setAttribute("xmlns", svgNS);
+            svg.setAttribute("width", width);
+            svg.setAttribute("height", height);
+            svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+            const defs = document.createElementNS(svgNS, "defs");
+            const gradInactive = document.createElementNS(svgNS, "radialGradient");
+            gradInactive.setAttribute("id", "gradInactive");
+            gradInactive.setAttribute("cx", "30%");
+            gradInactive.setAttribute("cy", "30%");
+            gradInactive.setAttribute("r", "70%");
+            gradInactive.innerHTML = `<stop offset="0%" stop-color="#222"/><stop offset="100%" stop-color="#000"/>`;
+            defs.appendChild(gradInactive);
+            const glow = document.createElementNS(svgNS, "filter");
+            glow.setAttribute("id", "glow");
+            glow.setAttribute("filterUnits", "userSpaceOnUse");
+
+            glow.setAttribute("x", "0");
+            glow.setAttribute("y", "0");
+            glow.setAttribute("width", "100%");
+            glow.setAttribute("height", "100%");
+
+            glow.innerHTML = `
+				<feGaussianBlur stdDeviation="6" result="blur"/>
+				<feMerge>
+					<feMergeNode in="blur"/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			`;
+            defs.appendChild(glow);
+
+            svg.setAttribute("style", "overflow: visible;");
+
+            svg.appendChild(defs);
+            if (includeBackground) {
+                const bg = document.createElementNS(svgNS, "rect");
+                bg.setAttribute("width", width);
+                bg.setAttribute("height", height);
+                bg.setAttribute("fill", "#111");
+                svg.appendChild(bg);
+            }
+            for (let y = 0; y < visibleRows; y++) {
+                for (let x = 0; x < visibleCols; x++) {
+                    const isActive = fullMatrix[y][x];
+                    if (!isActive && !includeInactive) continue;
+                    const cx = x * (dotSize + gap) + dotSize / 2;
+                    const cy = y * (dotSize + gap) + dotSize / 2;
+                    const r = dotSize / 2;
+                    const circle = document.createElementNS(svgNS, "circle");
+                    circle.setAttribute("cx", cx);
+                    circle.setAttribute("cy", cy);
+                    circle.setAttribute("r", r);
+                    if (isActive) {
+                        circle.setAttribute("fill", currentColor);
+                        circle.setAttribute("filter", "url(#glow)");
+                    } else {
+                        circle.setAttribute("fill", "url(#gradInactive)");
+                    }
+                    svg.appendChild(circle);
+                }
+            }
+            const serializer = new XMLSerializer();
+            const svgData = serializer.serializeToString(svg);
+            const blob = new Blob([svgData], {
+                type: "image/svg+xml"
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename + ".svg";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAsPNG(filename, includeBackground, includeInactive) {
+            const dotSize = 10;
+            const gap = 5;
+            const width = visibleCols * (dotSize + gap);
+            const height = visibleRows * (dotSize + gap);
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (includeBackground) {
+                ctx.fillStyle = "#000";
+                ctx.fillRect(0, 0, width, height);
+            }
+            for (let y = 0; y < visibleRows; y++) {
+                for (let x = 0; x < visibleCols; x++) {
+                    const isActive = fullMatrix[y][x];
+                    if (!isActive && !includeInactive) continue;
+                    const cx = x * (dotSize + gap) + dotSize / 2;
+                    const cy = y * (dotSize + gap) + dotSize / 2;
+                    const r = dotSize / 2;
+                    if (isActive) {
+                        ctx.save();
+                        ctx.shadowColor = currentColor;
+                        ctx.shadowBlur = 16;
+                        ctx.shadowOffsetX = 0;
+                        ctx.shadowOffsetY = 0;
+                        ctx.fillStyle = currentColor;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.restore();
+                    } else {
+                        const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+                        grad.addColorStop(0, "#222");
+                        grad.addColorStop(1, "#000");
+                        ctx.fillStyle = grad;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+            }
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename + ".png";
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+		document.getElementById("importFile").addEventListener("change", function(e) {
+			const file = e.target.files[0];
+			if (!file) return;
+
+			document.getElementById("exportFilename").value = file.name.replace(/\.json$/i, "");
+			document.title = file.name.replace(/\.json$/i, "") || "Matrix";
+			localStorage.setItem("exportFilename", file.name.replace(/\.json$/i, ""));
+
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				try {
+					const data = JSON.parse(event.target.result);
+					if (!Array.isArray(data.matrix)) {
+						alert("Ungültiges Matrix-Format.");
+						return;
+					}
+					if (typeof data.color === "string") {
+						currentColor = data.color;
+						colorPicker.value = data.color;
+						document.documentElement.style.setProperty("--dot-color", data.color);
+						localStorage.setItem("matrixColor", data.color);
+					}
+					fullMatrix = data.matrix;
+					visibleRows = typeof data.rows === "number" ? data.rows : fullMatrix.length;
+					visibleCols = typeof data.cols === "number" ? data.cols : fullMatrix[0]?.length || 0;
+					localStorage.setItem("matrixRows", visibleRows);
+					localStorage.setItem("matrixCols", visibleCols);
+					localStorage.setItem("matrixData", JSON.stringify(fullMatrix));
+					render();
+				} catch (err) {
+					alert("Fehler beim Importieren: " + err.message);
+				}
+			};
+			reader.readAsText(file);
+		});
+
+
+        const input = document.getElementById('exportFilename');
+
+        input.addEventListener('input', () => {
+            const text = input.value.trim();
+            document.title = text || "Matrix";
+			localStorage.setItem("exportFilename", text);
+        });
+		
+		window.addEventListener("DOMContentLoaded", () => {
+			const saved = localStorage.getItem("exportFilename");
+			if (saved !== null) {
+				input.value = saved;
+				document.title = saved || "Matrix";
+			}
+		});
+
+        loadColor();
+        loadMatrixState();
+        render();
+        updateExportOptions();
+        window.addEventListener("beforeunload", saveMatrixState);
+    </script>
+</body>
+
+</html>
