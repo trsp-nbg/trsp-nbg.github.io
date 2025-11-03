@@ -218,6 +218,24 @@
   }
 }
 
+/* Für WebKit-basierte Browser (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 12px; /* oder height für horizontal */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Hintergrund der Scrollleiste */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ff8800; /* Farbe des "Griffs" */
+  border-radius: 6px;
+  border: 3px solid transparent; /* optional für Abstand */
+  background-clip: content-box;
+}
+/* Für Firefox */
+scrollbar-color: #ff8800 transparent;
+scrollbar-width: thin;
   </style>
 </head>
 <body>
@@ -450,3 +468,4 @@ let lastScrollY = window.scrollY;
 
 </body>
 </html>
+
