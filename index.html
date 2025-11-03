@@ -28,6 +28,9 @@
 	html {
 	  scroll-behavior: smooth;
 	  transition: all 0.3s ease;
+	  /* Für Firefox */
+	  scrollbar-color: #ff8800 transparent;
+	  scrollbar-width: thin;
 	}
 	t {
 	  font-size: 30px;
@@ -233,9 +236,6 @@
   border: 3px solid transparent; /* optional für Abstand */
   background-clip: content-box;
 }
-/* Für Firefox */
-scrollbar-color: #ff8800 transparent;
-scrollbar-width: thin;
   </style>
 </head>
 <body>
@@ -468,4 +468,5 @@ let lastScrollY = window.scrollY;
 
 </body>
 </html>
+
 
