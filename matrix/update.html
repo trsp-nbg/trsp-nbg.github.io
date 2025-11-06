@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Download</title>
+  <style>
+	@font-face {
+        font-family: 'Bahnschrift';
+        src: url('https://trsp-nbg.github.io/resources/fonts/Bahnschrift.ttf') format('truetype');
+        font-weight: 100;
+        font-style: normal;
+    }
+		
+	body {
+	  display: flex;
+	  background: transparent;
+	  margin: 0;
+	  padding-right: 72px;
+	}
+
+	button {
+		color: red;
+		background: transparent;
+		border: 1px solid red;
+		font-size: 14px;
+		height: 24px;
+		font-family: "Bahnschrift", sans-serif;
+		font-weight: bold;
+		user-select: none;
+	}
+  </style>
+</head>
+<body>
+  <button onclick="dl()">Update verfügbar</button>
+</body>
+<script>
+	function dl() {
+      const link = document.createElement("a");
+      link.href = "Dropbox-Link";
+      link.download = "Matrix.zip";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+</script>
+</html>
