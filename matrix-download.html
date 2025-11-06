@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Matrix-App herunterladen</title>
+  <style>
+	:root {
+	  --bg-color: #1a0e00;
+	  --text-color: white;
+	  --btn-bg: #884400;
+	  --btn-hover: #995500;
+	  --btn-padding: 7px;
+	  --btn-radius-soft: 5px;
+	  --btn-radius-full: 14px;
+	}
+
+	body {
+	  background: var(--bg-color);
+	  color: var(--text-color);
+	  font-family: sans-serif;
+	  margin: 0;
+	  padding: 1em;
+	  text-align: center;
+	}
+
+	/* === Button-Grundstil === */
+	.btn,
+	.btn-text,
+	.btn-text:hover {
+	  background: var(--btn-bg);
+	  color: var(--text-color);
+	  padding: var(--btn-padding);
+	  border: none;
+	  user-select: none;
+	  cursor: default;
+	  font-size: 1em;
+	}
+
+	.btn:hover {
+	  background: var(--btn-hover);
+	}
+
+	/* === Button-Gruppierung === */
+	.btn-group {
+	  display: flex;
+	  gap: 1px;
+	}
+
+	/* === Radius-Varianten === */
+
+	/* Seiten */
+	.btn-l  { border-radius: var(--btn-radius-full) var(--btn-radius-soft) var(--btn-radius-soft) var(--btn-radius-full); }
+	.btn-r  { border-radius: var(--btn-radius-soft) var(--btn-radius-full) var(--btn-radius-full) var(--btn-radius-soft); }
+	.btn-t  { border-radius: var(--btn-radius-full) var(--btn-radius-full) var(--btn-radius-soft) var(--btn-radius-soft); }
+	.btn-b  { border-radius: var(--btn-radius-soft) var(--btn-radius-soft) var(--btn-radius-full) var(--btn-radius-full); }
+
+	/* Ecken */
+	.btn-tl { border-radius: var(--btn-radius-full) var(--btn-radius-soft) var(--btn-radius-soft) var(--btn-radius-soft); }
+	.btn-tr { border-radius: var(--btn-radius-soft) var(--btn-radius-full) var(--btn-radius-soft) var(--btn-radius-soft); }
+	.btn-bl { border-radius: var(--btn-radius-soft) var(--btn-radius-soft) var(--btn-radius-soft) var(--btn-radius-full); }
+	.btn-br { border-radius: var(--btn-radius-soft) var(--btn-radius-soft) var(--btn-radius-full) var(--btn-radius-soft); }
+
+	/* Mitte / Solo */
+	.btn-c  { border-radius: var(--btn-radius-soft); }
+	.btn-o  { border-radius: var(--btn-radius-full); }
+	
+	h1, h2, h3 {
+	  text-align: center;
+	  margin-top: 1px;
+	  user-select: none;
+	}
+	
+	ul, ol {
+	  width: max-content;         /* Breite passt sich dem Inhalt an */
+	  margin: 0 auto;             /* Zentriert die Liste horizontal */
+	  padding: 0;
+	  user-select: none;
+	}
+
+	ul li, ol li {
+	  text-align: left;           /* Text bleibt linksbündig */
+	}
+  </style>
+</head>
+<body>
+  <h1>Matrix-App herunterladen</h1>
+  <h2>Funktionen:</h2>
+  <ul>
+    <li>Zeilen und Spalten hinzufügen und entfernen</li>
+	<li>Farbe der Matrix ändern</li>
+	<li>Präsentationsmodus (verlasssen mit Schnelltippen)</li>
+	<li>Beim Verlassen der App wird der neueste Stand automatisch gespeichert</li>
+	<li>Letzte Schritte zurücknehmen (Strg/⌘ + z)/wiederholen (Strg/⌘ + y)</li>
+	<li>Exportieren als Bild, Vektor oder Datei zum Weiterbearbeiten</li>
+	<li>Importieren von Dateien zum Weiterbearbeiten</li>
+	<li>Der Dateiname wird als der Name von der App angezeigt</li>
+	<li>Auf Updates wird automatisch hingewiesen</li>
+  </ul>
+  <h2 style="margin-top: 20px;">Anleitung zum Download:</h2>
+  <ol>
+    <li>Klicke auf den Download-Button</li>
+	<li>Entpacke die ZIP-Datei</li>
+	<li>Öffne den entpackten Ordner und mache einen Doppelklick auf Matrix.exe</li>
+  </ol>
+  <h3 style="margin-top: 20px;">Wenn die App auch im Start-Reiter sein soll:</h3>
+  <ul>
+	<li>Pfad für Windows: <a style="user-select: text">C:\ProgramData\Microsoft\Windows\Start Menu\Programs</a></li>
+	<li>Pfad für MacOS: <a style="user-select: text">/Applications</a></li>
+    <li>Schiebe hierhin eine Verknüpfung (Rechtsklick und Verschieben) von Matrix.exe</li>
+  </ul>
+  <button class="btn btn-o" style="margin-top: 20px;" onclick="dl">Herunterladen</button>
+</body>
+<script>
+  function dl() {
+	const link = document.createElement("a");
+	link.href = "https://www.dropbox.com/scl/fi/vvvrvqgfrkxzrnsej1o97/Matrix.zip?dl=1";
+	link.download = "Matrix.zip";
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+  }
+</html>
