@@ -8,8 +8,8 @@
       button.style.display = "inline-block";
       button.addEventListener("click", () => {
         const link = document.createElement("a");
-        link.href = "Dropbox-Link";
-        link.download = "test.zip";
+        link.href = "https://www.dropbox.com/scl/fi/xcm3lmwrnwx1yxul9hbd1/Matrix.zip?dl=1";
+        link.download = "Matrix.zip";
         link.click();
       });
     }
@@ -17,3 +17,4 @@
     console.error("Update check failed:", err);
   }
 })();
+
