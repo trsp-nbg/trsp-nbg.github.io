@@ -17,6 +17,4 @@
     console.error("Update check failed:", err);
   }
 })();
-
-
-// new try 5
+//new try 6
