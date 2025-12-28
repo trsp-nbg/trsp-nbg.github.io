@@ -1,0 +1,280 @@
+<html lang="de">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+            Linktree für die Gruppe trsp.nbg
+        </title>
+        <style>
+            body {
+                font-family: sans-serif;
+                color: #ffffff;
+                background: #000000;
+                text-align: center;
+                align-items: center;
+                user-select: none;
+            }
+            .accounts {
+                width: fit-content;
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+                margin: auto;
+                transform: translateX(-20px);
+                gap: 10px;
+            }
+            .button-embedder {
+                color: #ffffff;
+                background: #ff0000;
+                border-radius: 20px;
+                text-align: left;
+                padding: 10px;
+                padding-right: 0px;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+            .name {
+                width: 45%;
+                text-align: left;
+                white-space: nowrap;
+            }
+            .buttons {
+                width: 175px;
+                display: flex;
+                gap: 5px;
+                margin-left: -5px;
+                height: 20px;
+                padding-bottom: 5px;
+            }
+            a, a img {
+                display: flex;
+                height: 30px;
+                width: 30px;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                border-radius: 20px;
+            }
+            #tooltip {
+                position: fixed;
+                padding: 6px 10px;
+                background: #333;
+                color: white;
+                border-radius: 6px;
+                font-size: 14px;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.15s ease;
+                z-index: 9999;
+            }
+            img[data-key], .tiktok-avatar {
+                width: 37px;
+                height: 37px;
+                border-radius: 50%;
+                object-fit: cover;
+                flex-shrink: 0;
+                margin-right: 10px;
+                padding: 0px;
+                -webkit-user-drag: none;
+                user-drag: none;
+                pointer-events: none;
+            }
+            .account {
+                display: flex;
+                flex-direction: row;
+                gap: 3px;
+                width: 100%;
+            }
+            .one-acc-flw {
+                display: flex;
+            }
+            .section {
+                margin-right: 12px;
+            }
+            req {
+                width: 90px;
+                font-family: monospace;
+                font-size: 13px;
+            }
+            a[style="cursor: default"] {
+                font-size: 17px;
+                background: #000;
+                align-items: center;
+                justify-content: center;
+            }
+            img {
+                -webkit-user-drag: none;
+                user-drag: none;
+                pointer-events: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>
+            trsp.nbg
+        </h1>
+        <h2>
+            Linktree zu unseren Kanälen
+        </h2>
+        <div class="accounts">
+            <div class="account">
+                <img uniqueid="trainspotting.nbg" class="request" data-key="avatarMedium" size="37px" />
+                <div class="button-embedder">
+                    <div class="name">
+                        trainspotting.nbg
+                    </div>
+                    <div class="buttons">
+                        <a href="https://www.tiktok.com/@trainspotting.nbg" onmouseover="tooltip('Trainspotting Nürnberg (1) auf TikTok')" onmouseout="hideTooltip()">
+                            <img src="svg/tiktok.svg" />
+                        </a>
+                    </div>
+                    <div class="one-acc-flw">
+                        <div class="section">
+                            <req uniqueid="trainspotting.nbg" data-key="followerCount" addright="svg/follower.svg" right="1"></req>
+                        </div>
+                        <div class="section">
+                            <req uniqueid="trainspotting.nbg" data-key="heart" addright="svg/heart.svg" right="1"></req>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account">
+                <img uniqueid="trainspotting.nurnberg" class="request" data-key="avatarMedium" size="37px" />
+                <div class="button-embedder">
+                    <div class="name">
+                        trainspotting.nurnberg
+                    </div>
+                    <div class="buttons">
+                        <a href="https://www.tiktok.com/@trainspotting.nurnberg" onmouseover="tooltip('Trainspotting Nürnberg (2) auf TikTok')" onmouseout="hideTooltip()">
+                            <img src="svg/tiktok.svg" />
+                        </a>
+                    </div>
+                    <div class="one-acc-flw">
+                        <div class="section">
+                            <req uniqueid="trainspotting.nurnberg" data-key="followerCount" addright="svg/follower.svg" right="1"></req>
+                        </div>
+                        <div class="section">
+                            <req uniqueid="trainspotting.nurnberg" data-key="heart" addright="svg/heart.svg" right="1"></req>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account">
+                <img uniqueid="lucas.kautz06.10.2006" class="request" data-key="avatarMedium" size="37px" />
+                <div class="button-embedder">
+                    <div class="name">
+                        Lucas Kautz
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div class="buttons">
+                            <a style="cursor: default" onmouseover="tooltip('Erstaccounts von Lucas Kautz')" onmouseout="hideTooltip()">1</a>
+                            <a href="https://www.tiktok.com/@lucas.kautz06.10.2006" onmouseover="tooltip('Lucas Kautz auf TikTok')" onmouseout="hideTooltip()">
+                                <img src="svg/tiktok.svg" />
+                            </a>
+                            <a href="https://www.youtube.de/@lucaskautz" onmouseover="tooltip('Lucas Kautz auf YouTube')" onmouseout="hideTooltip()">
+                                <img src="svg/youtube.svg" />
+                            </a>
+                            <a href="https://www.instagram.com/lucas_kautz_06.10.2006" onmouseover="tooltip('Lucas Kautz auf Instagram')" onmouseout="hideTooltip()">
+                                <img src="svg/instagram.svg" />
+                            </a>
+                            <a href="https://www.facebook.com/share/1H7gWRcaQW/" onmouseover="tooltip('Lucas Kautz auf Facebook')" onmouseout="hideTooltip()">
+                                <img src="svg/facebook.svg" />
+                            </a>
+                        </div>
+
+                        <div class="one-acc-flw">
+                            <div class="section">
+                                <req uniqueid="lucas.kautz06.10.2006" data-key="followerCount" addright="svg/follower.svg" right="1"></req>
+                            </div>
+                            <div class="section">
+                                <req uniqueid="lucas.kautz06.10.2006" data-key="heart" addright="svg/heart.svg" right="1"></req>
+                            </div>
+                        </div>
+
+                        <div class="buttons">
+                            <a style="cursor: default" onmouseover="tooltip('Zweitaccounts von Lucas Kautz')" onmouseout="hideTooltip()">2</a>
+                            <a href="https://www.tiktok.com/@lucaskautz25" onmouseover="tooltip('Lucas Kautz auf TikTok')" onmouseout="hideTooltip()">
+                                <img src="svg/tiktok.svg" />
+                            </a>
+                            <a href="https://www.youtube.de/@lucaskautz9505" onmouseover="tooltip('Lucas Kautz auf YouTube')" onmouseout="hideTooltip()">
+                                <img src="svg/youtube.svg" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="one-acc-flw">
+                        <div class="section">
+                            <req uniqueid="lucaskautz25" data-key="followerCount" addright="svg/follower.svg" right="1"></req>
+                        </div>
+                        <div class="section">
+                            <req uniqueid="lucaskautz25" data-key="heart" addright="svg/heart.svg" right="1"></req>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account">
+                <img uniqueid="trsp_r_nbg" class="request" data-key="avatarMedium" size="37px" />
+                <div class="button-embedder">
+                    <div class="name">trsp_r_nbg</div>
+                    <div class="buttons">
+                        <a href="https://www.tiktok.com/@trsp_r_nbg" onmouseover="tooltip('Trainspotting Roth-Nürnberg auf TikTok')" onmouseout="hideTooltip()">
+                            <img src="svg/tiktok.svg" />
+                        </a>
+                    </div>
+                    <div class="one-acc-flw">
+                        <div class="section">
+                            <req uniqueid="trsp_r_nbg" data-key="followerCount" addright="svg/follower.svg" right="1"></req>
+                        </div>
+                        <div class="section">
+                            <req uniqueid="trsp_r_nbg" data-key="heart" addright="svg/heart.svg" right="1"></req>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account">
+                <img class="tiktok-avatar" src="https://mmg.whatsapp.net/m1/v/t24/An8nh0YUY4CTAVGcmAXrEtGjzb5Hp56DuHOytK8RZxW5GupZmkBxCV7LI36Ra-92-rDfoQI4R5FXV2K0ll03T4NqFV2_UfRw5BZGNVPqAY-GwWOVx0jgzEn4edXLVWN0rD0CR1lcLdHacVu5l6p0?_nc_gid=vlJ8pB52iHrGHD_9ijXpLQ&_nc_oc=Adn_P9j_2X10g6vzqxf04GIIwAYGbJb78R3TN4rFtpvjAkfDhxbuiEVeWxPqXkS7hvY&ccb=10-5&oh=01_Q5Aa3QHCwcHwUseU0pKFYDX0cqGySyWkxbHPiiy2OuZF9WFcxQ&oe=6975DC35&_nc_sid=471a72" />
+                <div class="button-embedder">
+                    <div class="name">trsp.nbg.fü</div>
+                    <div class="buttons">
+                        <a href="https://whatsapp.com/channel/0029VbBefNj7oQhlpAJvHT2N" onmouseover="tooltip('Trainspotting Nürnberg-Fürth auf WhatsApp')" onmouseout="hideTooltip()">
+                            <img src="svg/whatsapp.svg">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tooltip">
+        </div>
+        <div style="width: 200px; margin: 20px auto 0 auto;">
+            Likes, Follows, sowie Profilbilder gelten nur für TikTok und werden automatisch aktualisiert. Ausnahme für trsp.nbg.fü, da dieser keinen TikTok-Account hat.
+        </div>
+        <script>
+            const tooltipEl = document.getElementById("tooltip");
+
+            function tooltip(text) {
+                tooltipEl.textContent = text;
+                tooltipEl.style.opacity = 1;
+
+                document.addEventListener("mousemove", moveTooltip);
+            }
+
+            function hideTooltip() {
+                tooltipEl.style.opacity = 0;
+                document.removeEventListener("mousemove", moveTooltip);
+            }
+
+            function moveTooltip(e) {
+                tooltipEl.style.left = (e.clientX + 12) + "px";
+                tooltipEl.style.top = (e.clientY + 12) + "px";
+            }
+        </script>
+        <script src="api.js">
+        </script>
+    </body>
+</html>
