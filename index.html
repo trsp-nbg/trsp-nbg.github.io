@@ -6,8 +6,24 @@
             Linktree für die Gruppe trsp.nbg
         </title>
         <style>
+			@font-face {
+			    font-family: "Sans";
+			    src: url("https://benla25.github.io/tasks-lite-app/resources/Sans.ttf")
+				   format("truetype");
+			    font-weight: normal;
+			    font-style: normal;
+			}
+			
+			@font-face {
+			    font-family: "SansText";
+			    src: url("https://benla25.github.io/tasks-lite-app/resources/Sans%20Text.ttf")
+				   format("truetype");
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
             body {
-                font-family: sans-serif;
+                font-family: "SansText", sans-serif;
                 color: #ffffff;
                 background: #000000;
                 text-align: center;
@@ -36,9 +52,13 @@
                 gap: 10px;
             }
             .name {
-                width: 45%;
+                width: 100%;
                 text-align: left;
                 white-space: nowrap;
+				padding-right: 10px;
+				font-weight: bold;
+				letter-spacing: 0.5px;
+				font-family: "Sans", sans-serif;
             }
             .buttons {
                 width: 175px;
@@ -85,7 +105,7 @@
                 display: flex;
                 flex-direction: row;
                 gap: 3px;
-                width: 100%;
+                width: 300px;
             }
             .one-acc-flw {
                 display: flex;
@@ -94,7 +114,7 @@
                 margin-right: 12px;
             }
             req {
-                width: 90px;
+                width: 106px;
                 font-family: monospace;
                 font-size: 13px;
             }
@@ -109,6 +129,11 @@
                 user-drag: none;
                 pointer-events: none;
             }
+			
+			h1, h2 {
+				letter-spacing: 0.5px;
+				font-family: "Sans", sans-serif;
+			}
         </style>
     </head>
     <body>
@@ -126,7 +151,7 @@
                         Trainspotting NBG und Umkr.
                     </div>
                     <div class="buttons">
-                        <a href="https://www.tiktok.com/@trainspotting.nbg" onmouseover="tooltip('Trainspotting NBG und Umkr. auf TikTok')" onmouseout="hideTooltip()">
+                        <a href="https://www.tiktok.com/@trainspotting.nbg" target="_blank" onmouseover="tooltip('Trainspotting NBG und Umkr. auf TikTok')" onmouseout="hideTooltip()">
                             <img src="svg/tiktok.svg" />
                         </a>
                     </div>
@@ -148,7 +173,7 @@
                         trainspotting.nurnberg
                     </div>
                     <div class="buttons">
-                        <a href="https://www.tiktok.com/@trainspotting.nurnberg" onmouseover="tooltip('Trainspotting Nürnberg auf TikTok')" onmouseout="hideTooltip()">
+                        <a href="https://www.tiktok.com/@trainspotting.nurnberg" target="_blank" onmouseover="tooltip('trainspotting.nurnberg auf TikTok')" onmouseout="hideTooltip()">
                             <img src="svg/tiktok.svg" />
                         </a>
                     </div>
@@ -172,16 +197,16 @@
                     <div style="display: flex; flex-direction: column; gap: 15px;">
                         <div class="buttons">
                             <a style="cursor: default" onmouseover="tooltip('Erstaccounts von Lucas Kautz')" onmouseout="hideTooltip()">1</a>
-                            <a href="https://www.tiktok.com/@lucas.kautz06.10.2006" onmouseover="tooltip('Lucas Kautz auf TikTok')" onmouseout="hideTooltip()">
+                            <a href="https://www.tiktok.com/@lucas.kautz06.10.2006" target="_blank" onmouseover="tooltip('Lucas Kautz auf TikTok')" onmouseout="hideTooltip()">
                                 <img src="svg/tiktok.svg" />
                             </a>
-                            <a href="https://www.youtube.de/@lucaskautz" onmouseover="tooltip('Lucas Kautz auf YouTube')" onmouseout="hideTooltip()">
+                            <a href="https://www.youtube.de/@lucaskautz" target="_blank" onmouseover="tooltip('Lucas Kautz auf YouTube')" onmouseout="hideTooltip()">
                                 <img src="svg/youtube.svg" />
                             </a>
-                            <a href="https://www.instagram.com/lucas_kautz_06.10.2006" onmouseover="tooltip('Lucas Kautz auf Instagram')" onmouseout="hideTooltip()">
+                            <a href="https://www.instagram.com/lucas_kautz_06.10.2006" target="_blank" onmouseover="tooltip('Lucas Kautz auf Instagram')" onmouseout="hideTooltip()">
                                 <img src="svg/instagram.svg" />
                             </a>
-                            <a href="https://www.facebook.com/share/1H7gWRcaQW/" onmouseover="tooltip('Lucas Kautz auf Facebook')" onmouseout="hideTooltip()">
+                            <a href="https://www.facebook.com/share/1H7gWRcaQW/" target="_blank" onmouseover="tooltip('Lucas Kautz auf Facebook')" onmouseout="hideTooltip()">
                                 <img src="svg/facebook.svg" />
                             </a>
                         </div>
@@ -197,10 +222,10 @@
 
                         <div class="buttons">
                             <a style="cursor: default" onmouseover="tooltip('Zweitaccounts von Lucas Kautz')" onmouseout="hideTooltip()">2</a>
-                            <a href="https://www.tiktok.com/@lucaskautz25" onmouseover="tooltip('Lucas Kautz auf TikTok')" onmouseout="hideTooltip()">
+                            <a href="https://www.tiktok.com/@lucaskautz25" target="_blank" onmouseover="tooltip('Lucas Kautz auf TikTok')" onmouseout="hideTooltip()">
                                 <img src="svg/tiktok.svg" />
                             </a>
-                            <a href="https://www.youtube.de/@lucaskautz9505" onmouseover="tooltip('Lucas Kautz auf YouTube')" onmouseout="hideTooltip()">
+                            <a href="https://www.youtube.de/@lucaskautz9505" target="_blank" onmouseover="tooltip('Lucas Kautz auf YouTube')" onmouseout="hideTooltip()">
                                 <img src="svg/youtube.svg" />
                             </a>
                         </div>
@@ -222,7 +247,7 @@
                 <div class="button-embedder">
                     <div class="name">trsp_r_nbg</div>
                     <div class="buttons">
-                        <a href="https://www.tiktok.com/@trsp_r_nbg" onmouseover="tooltip('Trainspotting Roth-Nürnberg auf TikTok')" onmouseout="hideTooltip()">
+                        <a href="https://www.tiktok.com/@trsp_r_nbg" target="_blank" onmouseover="tooltip('Trainspotting Roth-Nürnberg auf TikTok')" onmouseout="hideTooltip()">
                             <img src="svg/tiktok.svg" />
                         </a>
                     </div>
@@ -236,13 +261,36 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="account">
+                <img uniqueid="lukas.wkoppe" class="request" data-key="avatarMedium" size="37px" />
+                <div class="button-embedder">
+                    <div class="name">ytluka</div>
+                    <div class="buttons">
+                        <a href="https://www.tiktok.com/@lukas.wkoppe" target="_blank" onmouseover="tooltip('ytluka auf TikTok')" onmouseout="hideTooltip()">
+                            <img src="svg/tiktok.svg" />
+                        </a>
+                        <a href="https://www.youtube.de/@LukaswKoppe" target="_blank" onmouseover="tooltip('YTluca auf YouTube')" onmouseout="hideTooltip()">
+                            <img src="svg/youtube.svg" />
+                        </a>
+                    </div>
+                    <div class="one-acc-flw">
+                        <div class="section">
+                            <req uniqueid="lukas.wkoppe" data-key="followerCount" addright="svg/follower.svg" right="1"></req>
+                        </div>
+                        <div class="section">
+                            <req uniqueid="lukas.wkoppe" data-key="heart" addright="svg/heart.svg" right="1"></req>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="account">
-                <img class="tiktok-avatar" src="https://mmg.whatsapp.net/m1/v/t24/An8nh0YUY4CTAVGcmAXrEtGjzb5Hp56DuHOytK8RZxW5GupZmkBxCV7LI36Ra-92-rDfoQI4R5FXV2K0ll03T4NqFV2_UfRw5BZGNVPqAY-GwWOVx0jgzEn4edXLVWN0rD0CR1lcLdHacVu5l6p0?_nc_gid=vlJ8pB52iHrGHD_9ijXpLQ&_nc_oc=Adn_P9j_2X10g6vzqxf04GIIwAYGbJb78R3TN4rFtpvjAkfDhxbuiEVeWxPqXkS7hvY&ccb=10-5&oh=01_Q5Aa3QHCwcHwUseU0pKFYDX0cqGySyWkxbHPiiy2OuZF9WFcxQ&oe=6975DC35" />
+                <img class="tiktok-avatar" src="https://mmg.whatsapp.net/m1/v/t24/An8nh0YUY4CTAVGcmAXrEtGjzb5Hp56DuHOytK8RZxW5GupZmkBxCV7LI36Ra-92-rDfoQI4R5FXV2K0ll03T4NqFV2_UfRw5BZGNVPqAY-GwWOVx0jgzEn4edXLVWN0rD0CR1lcLdHacVu5l6p0?_nc_gid=vlJ8pB52iHrGHD_9ijXpLQ&_nc_oc=Adn_P9j_2X10g6vzqxf04GIIwAYGbJb78R3TN4rFtpvjAkfDhxbuiEVeWxPqXkS7hvY&ccb=10-5&oh=01_Q5Aa3QHCwcHwUseU0pKFYDX0cqGySyWkxbHPiiy2OuZF9WFcxQ&oe=6975DC35&_nc_sid=471a72" />
                 <div class="button-embedder">
                     <div class="name">trsp.nbg.fü</div>
                     <div class="buttons">
-                        <a href="https://whatsapp.com/channel/0029VbBefNj7oQhlpAJvHT2N" onmouseover="tooltip('Trainspotting Nürnberg-Fürth auf WhatsApp')" onmouseout="hideTooltip()">
+                        <a href="https://whatsapp.com/channel/0029VbBefNj7oQhlpAJvHT2N" target="_blank" onmouseover="tooltip('Trainspotting Nürnberg-Fürth auf WhatsApp')" onmouseout="hideTooltip()">
                             <img src="svg/whatsapp.svg">
                         </a>
                     </div>
